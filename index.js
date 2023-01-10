@@ -1,25 +1,17 @@
 import express from 'express'
+import { CategoryModel } from './db.js'
+import entryRoutes from './routes/entry_routes.js'
 
-const categories = ['Food', 'Coding', 'Work', 'Other']
 
 const app = express()
-const port = 8080
+const port = 4001
 
 app.use(express.json())
 
-app.get('/categories', (req, res) => res.status(200).send(categories))
-const entries = [
-    {category: 'Food', content: 'Hello!'},
-    {category: 'Coding', content: 'Express is cool'},
-    {category: 'Work', content: 'Anphter day at the office'}
-]
+app.get('/', (request, response) => response.send({ info: 'Journal API 2023' }))
 
-app.get('/entries', (req, res) => res.status(204).send(entries))
-app.post('/entries', (req, res) => {
-console.log(req.body.foo)
-res.send(req.body)
-})
+app.get('/categories', async (req, res) => res.send(await CategoryModel.find()))
 
-app.get('/', (request, response) => response.send({ info: 'Journal API' }))
+app.use('/entries', entryRoutes)
 
 app.listen(port, () => console.log(`App running at http://localhost:${port}/`))
